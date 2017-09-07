@@ -526,7 +526,7 @@ class pls:
         return t, p, w, c
 
 
-    def computeSS (X, Y):
+    def computeSS (self, X, Y):
         """Computes the Sum-Of-Squares for provided X and Y matrices
 
            Returns
