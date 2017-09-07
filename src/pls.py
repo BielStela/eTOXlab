@@ -95,7 +95,7 @@ class pls:
 
         np.save(f,self.autoscale)
         
-        for a in range(self.Am):
+        for a in xrange(self.Am):
             np.save(f,self.t[a])
             np.save(f,self.p[a])
             np.save(f,self.w[a])
@@ -119,7 +119,7 @@ class pls:
             np.save(f,self.FPpred[a])
             np.save(f,self.FNpred[a])
 
-        for a in range(self.Av):
+        for a in xrange(self.Av):
             np.save(f,self.SSY[a])
             np.save(f,self.SDEP[a])
             np.save(f,self.Q2[a])
@@ -145,7 +145,7 @@ class pls:
 
         self.autoscale = np.load(f)
         
-        for a in range(self.Am):
+        for a in xrange(self.Am):
             self.t.append (np.load(f))
             self.p.append (np.load(f))
             self.w.append (np.load(f))
@@ -169,7 +169,7 @@ class pls:
             self.FPpred.append (np.load(f))
             self.FNpred.append (np.load(f))
             
-        for a in range(self.Av): 
+        for a in xrange(self.Av): 
             self.SSY.append (np.load(f))
             self.SDEP.append (np.load(f))
             self.Q2.append (np.load(f))
@@ -191,33 +191,33 @@ class pls:
         c += 1
 
         self.mux = np.zeros(self.nvarx,dtype=np.float64)
-        for i in range (self.nvarx):
+        for i in xrange (self.nvarx):
             self.mux[i] = t[c]
             c += 1
 
         self.wgx = np.zeros(self.nvarx,dtype=np.float64)
-        for i in range (self.nvarx):
+        for i in xrange (self.nvarx):
             self.wgx[i] = t[c]
             c += 1
 
-        for a in range (self.Am):
+        for a in xrange (self.Am):
             p = np.zeros(self.nvarx,dtype=np.float64)
-            for i in range (self.nvarx):
+            for i in xrange (self.nvarx):
                 p[i] = t[c]
                 c += 1
             self.p.append(p)
                 
             w = np.zeros(self.nvarx,dtype=np.float64)
-            for i in range (self.nvarx):
+            for i in xrange (self.nvarx):
                 w[i] = t[c]
                 c += 1
             self.w.append(w)
 
-        for a in range(self.Am):
+        for a in xrange(self.Am):
             self.c.append(t[c])
             c += 1
 
-        for a in range(self.Am): 
+        for a in xrange(self.Am): 
             self.cutoff.append(t[c])
             c += 1            
 
@@ -234,7 +234,7 @@ class pls:
 ##        self.mux = np.load(f)
 ##        self.wgx = np.load(f)
 ##       
-##        for a in range(self.Am):
+##        for a in xrange(self.Am):
 ##            self.p.append (np.load(f))
 ##            self.w.append (np.load(f))
 ##            
@@ -256,7 +256,7 @@ class pls:
 ##        np.save(f,self.mux)
 ##        np.save(f,self.wgx)
 ##        
-##        for a in range(self.Am):
+##        for a in xrange(self.Am):
 ##            np.save(f,self.p[a])
 ##            np.save(f,self.w[a])
 ##            
@@ -280,7 +280,7 @@ class pls:
         np.savetxt(f,self.mux,fmt='%f')
         np.savetxt(f,self.wgx,fmt='%f')
         
-        for a in range(self.Am):
+        for a in xrange(self.Am):
             np.savetxt(f,self.p[a],fmt='%f')
             np.savetxt(f,self.w[a],fmt='%f')
             
@@ -302,8 +302,8 @@ class pls:
         """
         nobj, nvarx= np.shape(X)
 
-##        for i in range (nobj):
-##            for j in range (nvarx):
+##        for i in xrange (nobj):
+##            for j in xrange (nvarx):
 ##                print X[i,j],
 ##            print
 
@@ -409,7 +409,7 @@ class pls:
         nobj,nvarx = np.shape (X)
 
         SSY0 = 0.0
-        for i in range (nobj):
+        for i in xrange (nobj):
             SSY0+=np.square(Y[i]-np.mean(Y))
 
         SSY = np.zeros(A,dtype=np.float64)
@@ -417,7 +417,7 @@ class pls:
 
         if gui: updateProgress (0.0)
         
-        for i in range (nobj):
+        for i in xrange (nobj):
             
             # build reduced X and Y matrices removing i object
             Xr = np.delete(X,i,axis=0)
@@ -440,7 +440,7 @@ class pls:
             # updates SSY with the object i errors
             YP[i,0]=Y[i]
             
-            for a in range(A):
+            for a in xrange(A):
                 SSY[a]+= np.square(yp[a]-Y[i])
                 YP[i,a+1]=yp[a]
 
@@ -477,7 +477,7 @@ class pls:
         d=np.zeros(A,dtype=np.float64)
 
         yp = 0.0
-        for a in range (A):        
+        for a in xrange (A):        
             t[a] = np.dot(x,self.w[a])
             yp += t[a]*self.c[a]
             y[a]= yp
@@ -501,29 +501,24 @@ class pls:
            p:    vector of loadings
            w:    vector of weights
            c:    inner relationship
-        """
-        
+        """ 
+
         nobj,nvarx = np.shape (X)
         w = np.zeros(nvarx, dtype=np.float64)
         p = np.zeros(nvarx, dtype=np.float64)
         t = np.zeros(nobj , dtype=np.float64)
 
         uu = np.dot(Y.T,Y)
-        for j in range(nvarx):
-            w[j] = np.dot(Y,X[:,j])/uu
-            
+        w=np.dot(Y,X)/uu     
         ww = np.sqrt(np.dot(w,w))
+
         if ww>1e-9 : w/=ww
 
-        for i in range(nobj):
-            t[i] = np.dot(w,X[i,:])
-
+        t=np.dot(X,w)
         tt = np.dot(t,t)
 
         if (tt>1e-9):
-            for j in range(nvarx):
-                p[j] = np.dot(t,X[:,j])/tt
-
+            p = np.dot(t,X)/tt
             c = np.dot(t,Y)/tt
         else:
             c = 0.00
@@ -531,26 +526,19 @@ class pls:
         return t, p, w, c
 
 
-    def computeSS (self, X, Y):
+    def computeSS (X, Y):
         """Computes the Sum-Of-Squares for provided X and Y matrices
 
            Returns
-           SSX:    sum of squates of the X matrix
+           SSX:    sum of squares of the X matrix
            SSY:    sum of squares of the Y matrix
            d:      vector with the SSX for every object 
         """
         
-        nobj,nvarx = np.shape (X)
-        
-        SSX=SSY=0.0
-
-        d = np.zeros(nobj,dtype=np.float64)
-        
-        for i in range (nobj):
-            d[i] = np.dot(X[i,:],X[i,:])
-            SSX += d[i]
-            SSY += np.square(Y[i])
-            
+        SSY = np.dot(Y, Y) 
+        d = np.sum(np.square(X), axis=1)
+        SSX = np.sum(d)
+              
         return SSX, SSY, d
 
 
@@ -561,10 +549,10 @@ class pls:
         """
         
         nobj,nvarx = np.shape (X)
-        
-        for i in range (nobj):
-            X[i,:] -= (t[i]*p)
-            Y[i] -= t[i]*c
+
+        T = np.multiply(p, t[:, np.newaxis])
+        X -= T
+        Y -= (t*c)
         
         return X,Y
 
@@ -580,7 +568,7 @@ class pls:
         
         y = np.zeros(A,dtype=np.float64)
         
-        for a in range(A):
+        for a in xrange(A):
             t, p, w, c = self.extractLV(X, Y)
             if a>0 : y[a]=y[a-1]
            
@@ -593,7 +581,7 @@ class pls:
 
     def recalculate (self):
         yr = np.zeros ((self.nobj,self.Am+1),dtype=np.float64)
-        for i in range (self.nobj):
+        for i in xrange(self.nobj):
             # self.project could be destructive, since the X vector is deflated, so make sure to copy!
             success, result = self.project(self.X[i,:].copy(),self.Am) # just for final #LV
             yr[i,0]=self.Y[i]
@@ -605,14 +593,14 @@ class pls:
 
         by = []
         yr = self.recalculate()
-        for i in range (self.nobj):
+        for i in xrange (self.nobj):
             by.append (yr[i][0] > ycutoff) # yr[0] is the experimental Y
             
-        for a in range (self.Am):
+        for a in xrange (self.Am):
 
             TP=TN=FP=FN=0
 
-            for i in range(self.nobj):                
+            for i in xrange(self.nobj):                
                 if by[i]:
                     if yr[i][a+1] > cutoff:
                         TP+=1
@@ -641,14 +629,14 @@ class pls:
         by = []
         yp = self.validateLOO(self.Am, gui=True)
 
-        for i in range (self.nobj):
+        for i in xrange (self.nobj):
             by.append (yp[i][0] > ycutoff) # yp[0] is the experimental Y
             
-        for a in range (self.Am):
+        for a in xrange (self.Am):
 
             TP=TN=FP=FN=0
 
-            for i in range(self.nobj):                
+            for i in xrange(self.nobj):                
                 if by[i]:
                     if yp[i][a+1] > self.cutoff[a]:
                         TP+=1
@@ -674,7 +662,7 @@ class pls:
         # return a binary (0 = False, 1 = True) array for being processed in ADAN
         ypbin = np.zeros (self.nobj,dtype=np.float64)
         
-        for i in range(self.nobj):
+        for i in xrange(self.nobj):
             if (yp[i][-1] > self.cutoff[-1]) : ypbin[i] = 1.0 
                 
         return (ypbin)
@@ -684,20 +672,20 @@ class pls:
 
         by = []
         yr = self.recalculate()
-        for i in range (self.nobj):
+        for i in xrange (self.nobj):
             by.append (yr[i][0] > ycutoff) # yr[0] is the experimental Y
             
-        for a in range (self.Am):
+        for a in xrange (self.Am):
             bestv  = 1.0e20
             bestc  = 0.0           
             cutoff = 0.0
             bTP=bTN=bFP=bFN=0
 
-            for step in range (nsteps):
+            for step in xrange (nsteps):
                 cutoff+=1.0/nsteps
                 TP=TN=FP=FN=0
 
-                for i in range(self.nobj):                
+                for i in xrange(self.nobj):                
                     if by[i]:
                         if yr[i][a+1] > cutoff:
                             TP+=1
@@ -742,7 +730,7 @@ class pls:
         nvarxOri = nvarx
         index = np.ones(nvarx,dtype=np.int)
         st = np.std (X, axis=0, ddof=1)
-        for i in range (nvarx):
+        for i in xrange (nvarx):
             if  st[i] < 1e-10:
                 index[i] = 0  # set to 0 to allow creation of reduced matrices
         nvarxb = np.sum(index)
@@ -751,7 +739,7 @@ class pls:
         
         Xb = np.empty((nobj, nvarxb), dtype=np.float64)
         k=0
-        for i in range (nvarx):
+        for i in xrange (nvarx):
             if index[i]>0:
                 Xb[:,k]=X[:,i]
                 k+=1
@@ -766,7 +754,7 @@ class pls:
 
         # obtain first estimation of Y std error
         SSY0 = 0.0
-        for i in range (nobj):
+        for i in xrange (nobj):
             SSY0+=np.square(Y[i]-np.mean(Y))
         SDEP0 = np.sqrt(SSY0/float(nobj))
         SDEP0x10 = 10.0 * SDEP0
@@ -781,11 +769,11 @@ class pls:
 
         if gui: updateProgress (0.0)
         
-        for i in range(ncomb):
+        for i in xrange(ncomb):
 
             # extract x design line (not considering dummies)            
             k=0
-            for j in range (nvarxm):
+            for j in xrange (nvarxm):
                 if j%(dummyStep+1) :         # non-dummy var
                     xdesign[k]=design[i][j]
                     k+=1
@@ -798,7 +786,7 @@ class pls:
             # build a X reduced matrix Xr
             Xr = np.empty((nobj, nvarxr), dtype=np.float64)
             k=0
-            for j in range (nvarx):
+            for j in xrange (nvarx):
                 if xdesign[j]>0:
                     Xr[:,k]=Xb[:,j]
                     k+=1
@@ -827,12 +815,12 @@ class pls:
         dummyMean = 0.00
         k  = 0
 
-        for i in range(nvarxm):
+        for i in xrange(nvarxm):
             if not (i%(dummyStep+1)) :   # dummy var
                 dummyMean+=effect[i]
         dummyMean/=ndummy
 
-        for i in range(nvarxm):
+        for i in xrange(nvarxm):
             if not (i%(dummyStep+1)) :   # dummy var
                 dummyEffect+=np.square(effect[i]-dummyMean)
                 ##dummyEffect+=np.square(effect[i])                 ## old version: assuming mean of zero (?) 
@@ -851,7 +839,7 @@ class pls:
         effectCutoff = t * dummySD
         
         res = np.ones(nvarx,dtype=np.int)          # fixed (default)      
-        for i in range(nvarx):
+        for i in xrange(nvarx):
             if np.abs(effect[i]) < effectCutoff:   # uncertain
                 res[i] = 2
             elif effect[i] > 0 :
@@ -862,7 +850,7 @@ class pls:
         # map the result in a vector representing the full, original X
         resExp = np.ones(nvarxOri,dtype=np.int)
         k = 0
-        for i in range (nvarxOri):
+        for i in xrange (nvarxOri):
             if index[i]==0:
                 resExp[i] = 0       # these were already excluded or are inactive variables
             else :
@@ -894,10 +882,10 @@ def readData (filename):
 
     X = np.zeros((nobj,nvar-1),dtype=np.float64)
     Y = np.zeros(nobj,dtype=np.float64)
-    for i in range(nobj):
+    for i in xrange(nobj):
         line = f.readline()
         line = f.readline()
-        for j in range(nvar-1):
+        for j in xrange(nvar-1):
             line = f.readline()
             X[i,j]=float(line)
         line = f.readline()
@@ -927,13 +915,13 @@ if __name__ == "__main__":
         mypls.saveModel('modelPLS.npy')
 
         # everything complete, print the results
-        for a in range (mypls.Am):
+        for a in xrange (mypls.Am):
             print "SSXex %6.4f SSXac %6.4f " % \
                   (mypls.SSXex[a], mypls.SSXac[a]),
             print "SSYex %6.4f SSYac %6.4f SDEC %6.4f" % \
                   (mypls.SSYex[a], mypls.SSYac[a], mypls.SDEC[a])
          
-        for a in range (mypls.Av):
+        for a in xrange (mypls.Av):
             print 'A:%2d  SSY: %6.4f Q2: %6.4f SDEP: %6.4f' % \
                   (a+1,mypls.SSY[a],mypls.Q2[a],mypls.SDEP[a])
             
@@ -959,7 +947,7 @@ if __name__ == "__main__":
 
                 mypls.build(X,Y,targetA=5,autoscale=Auto)
                 mypls.validateLOO(5, gui=False)
-                for a in range (mypls.Av):
+                for a in xrange (mypls.Av):
                     print 'A:%2d  SSY: %6.4f Q2: %6.4f SDEP: %6.4f' % \
                           (a+1,mypls.SSY[a],mypls.Q2[a],mypls.SDEP[a])
                 
@@ -978,7 +966,7 @@ if __name__ == "__main__":
 ##        # validate the model
 ##        mypls.validateLOO(5, gui=True)
 ##
-##        for a in range (mypls.Av):
+##        for a in xrange (mypls.Av):
 ##            print 'A:%2d  SSY: %6.4f Q2: %6.4f SDEP: %6.4f' % \
 ##                  (a+1,mypls.SSY[a],mypls.Q2[a],mypls.SDEP[a])
         
@@ -992,7 +980,7 @@ if __name__ == "__main__":
 ##    pls2.loadModel('modelPLS.npy')
 ##
 ##    # projects the data on the loaded model
-##    for i in range(nobj):
+##    for i in xrange(nobj):
 ##        success, result = pls2.project(x[i,:],3)
 ##        if success:
 ##            yp, tp, dmodx = result
